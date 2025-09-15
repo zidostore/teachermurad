@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأستاذ مراد شرادقه</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* شريط التواصل الاجتماعي */
+        .social-bar {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .whatsapp {
+            background: #25D366;
+        }
+        
+        .youtube {
+            background: #FF0000;
+        }
+        
+        /* نافذة تسجيل الدخول */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-form h2 {
+            text-align: center;
+            color: #2575fc;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #2575fc;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1c64e0;
+        }
+        
+        .btn-secondary {
+            background: #999;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #777;
+        }
+        
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+        
+        .admin-bar {
+            display: none;
+            justify-content: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .admin-btn {
+            padding: 8px 15px;
+            background: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .admin-btn.logout {
+            background: #ff4d4d;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-badge {
+            display: flex;
+            align-items: center;
+            background: #f5f7ff;
+            padding: 8px 15px;
+            border-radius: 30px;
+            color: #444;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .contact-badge:hover {
+            background: #6a11cb;
+            color: white;
+        }
+        
+        .contact-badge i {
+            margin-left: 8px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo i {
+            font-size: 36px;
+            color: #6a11cb;
+            margin-left: 10px;
+        }
+        
+        h1 {
+            color: #2575fc;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 30px 0 0 30px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-box button {
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            flex: 0 0 250px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar h2 {
+            color: #6a11cb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .categories {
+            list-style: none;
+        }
+        
+        .categories li {
+            margin-bottom: 10px;
+        }
+        
+        .categories a {
+            display: block;
+            padding: 10px 15px;
+            background-color: #f5f7ff;
+            border-radius: 5px;
+            color: #444;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .categories a:hover {
+            background-color: #6a11cb;
+            color: white;
+            transform: translateX(-5px);
+        }
+        
+        .categories a i {
+            margin-left: 8px;
+        }
+        
+        .content {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            color: #2575fc;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .add-file-btn {
+            padding: 8px 15px;
+            background: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .file-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .file-icon {
+            background: #6a11cb;
+            color: white;
+            font-size: 24px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .file-details {
+            padding: 15px;
+        }
+        
+        .file-details h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .file-meta {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .download-btn {
+            display: block;
+            text-align: center;
+            background: #2575fc;
+            color: white;
+            padding: 8px 0;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #1c64e0;
+        }
+        
+        /* نمط نموذج رفع الملف */
+        .upload-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .upload-form h3 {
+            margin-bottom: 15px;
+            color: #2575fc;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            padding: 20px;
+        }
+        
+        @media (max-width: 1100px) {
+            .social-bar {
+                left: 10px;
+            }
+            
+            .social-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .social-bar {
+                position: static;
+                flex-direction: row;
+                justify-content: center;
+                transform: none;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                flex: 1;
+            }
+            
+            .files-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- نافذة تسجيل الدخول -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-form">
+            <h2>تسجيل الدخول للمعلم</h2>
+            <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم">
+            </div>
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور">
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="closeLogin">إلغاء</button>
+                <button class="btn btn-primary" id="loginBtn">دخول</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط وسائل التواصل الاجتماعي -->
+    <div class="social-bar">
+        <a href="https://wa.me/962786134358" class="social-icon whatsapp" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://youtube.com/channel/UCZlGJ4V0kv5ReXBL2KePNgw?si=FZowc-ReYinJH1ek" class="social-icon youtube" target="_blank">
+            <i class="fab fa-youtube"></i>
+        </a>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="admin-bar" id="adminBar">
+                <button class="admin-btn" id="addFileBtn">إضافة ملف</button>
+                <button class="admin-btn logout" id="logoutBtn">تسجيل خروج</button>
+            </div>
+            
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>الأستاذ مراد شرادقه</h1>
+            </div>
+            <p class="description">جميع الملفات المطلوبة خلال العام الدراسي ستكون هنا</p>
+            
+            <div class="contact-info">
+                <a href="https://wa.me/962786134358" class="contact-badge" target="_blank">
+                    <i class="fab fa-whatsapp"></i> تواصل عبر الواتساب
+                </a>
+                <a href="https://youtube.com/channel/UCZlGJ4V0kv5ReXBL2KePNgw?si=FZowc-ReYinJH1ek" class="contact-badge" target="_blank">
+                    <i class="fab fa-youtube"></i> قناة اليوتيوب
+                </a>
+                <a href="#" class="contact-badge" id="adminLoginBtn">
+                    <i class="fas fa-lock"></i> دخول المعلم
+                </a>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" placeholder="ابحث عن ملف أو مادة...">
+                <button><i class="fas fa-search"></i> بحث</button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h2>الأقسام الرئيسية</h2>
+                <ul class="categories">
+                    <li><a href="#"><i class="fas fa-calculator"></i> الوحدة الأولى</a></li>
+                    <li><a href="#"><i class="fas fa-flask"></i> الوحدة الثانية</a></li>
+                    <li><a href="#"><i class="fas fa-language"></i> الوحدة الرابعة</a></li>
+                    <li><a href="#"><i class="fas fa-globe"></i> الوحدة الخامسة</a></li>
+                    <li><a href="#"><i class="fas fa-code"></i> الوحدة السادسة</a></li>
+                    <li><a href="#"><i class="fas fa-book"></i> المراجعات النهائية</a></li>
+                </ul>
+                
+                <h2>الملفات الأخيرة</h2>
+                <ul class="categories">
+                    <li><a href="#"><i class="fas fa-file-pdf"></i> ملخص قواعد الرياضيات</a></li>
+                    <li><a href="#"><i class="fas fa-file-word"></i> تجارب علوم للفصل الأول</a></li>
+                    <li><a href="#"><i class="fas fa-file-excel"></i> جداول المراجعة النهائية</a></li>
+                </ul>
+            </div>
+            
+            <div class="content">
+                <div class="section-title">
+                    <h2>الملفات المتاحة للتحميل</h2>
+                    <button class="add-file-btn" id="showUploadForm">
+                        <i class="fas fa-plus"></i> إضافة ملف
+                    </button>
+                </div>
+                
+                <!-- نموذج رفع الملف (مخفي بشكل افتراضي) -->
+                <div class="upload-form" id="uploadForm">
+                    <h3>رفع ملف جديد</h3>
+                    <div class="form-group">
+                        <label for="fileTitle">اسم الملف</label>
+                        <input type="text" id="fileTitle" placeholder="أدخل اسم الملف">
+                    </div>
+                    <div class="form-group">
+                        <label for="fileCategory">القسم</label>
+                        <select id="fileCategory">
+                            <option value="unit1">الوحدة الأولى</option>
+                            <option value="unit2">الوحدة الثانية</option>
+                            <option value="unit4">الوحدة الرابعة</option>
+                            <option value="unit5">الوحدة الخامسة</option>
+                            <option value="unit6">الوحدة السادسة</option>
+                            <option value="reviews">المراجعات النهائية</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fileUpload">اختر الملف (PDF فقط)</label>
+                        <input type="file" id="fileUpload" accept=".pdf">
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" id="cancelUpload">إلغاء</button>
+                        <button class="btn btn-primary" id="submitFile">رفع الملف</button>
+                    </div>
+                </div>
+                
+                <div class="files-grid" id="filesContainer">
+                    <!-- سيتم إضافة الملفات ديناميكيًا هنا -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 الأستاذ مراد شرادقه - جميع الحقوق محفوظة</p>
+            <p>للاستفسار: <a href="https://wa.me/962786134358" style="color: white;">تواصل عبر الواتساب</a> أو تفضل بزيارة <a href="https://youtube.com/channel/UCZlGJ4V0kv5ReXBL2KePNgw?si=FZowc-ReYinJH1ek" style="color: white;">قناتنا على اليوتيوب</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // بيانات الاعتماد الافتراضية (يمكن تغييرها)
+        const ADMIN_CREDENTIALS = {
+            username: "zaidradaideh",
+            password: "zaid2007"
+        };
+        
+        // كود جافاسكريبت لإدارة الملفات والتسجيل
+        document.addEventListener('DOMContentLoaded', function() {
+            const filesContainer = document.getElementById('filesContainer');
+            const showUploadFormBtn = document.getElementById('showUploadForm');
+            const uploadForm = document.getElementById('uploadForm');
+            const cancelUploadBtn = document.getElementById('cancelUpload');
+            const submitFileBtn = document.getElementById('submitFile');
+            const loginModal = document.getElementById('loginModal');
+            const adminLoginBtn = document.getElementById('adminLoginBtn');
+            const closeLoginBtn = document.getElementById('closeLogin');
+            const loginBtn = document.getElementById('loginBtn');
+            const adminBar = document.getElementById('adminBar');
+            const addFileBtn = document.getElementById('addFileBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            // التحقق من حالة تسجيل الدخول
+            let isLoggedIn = localStorage.getItem('isTeacherLoggedIn') === 'true';
+            
+            // تحديث واجهة المستخدم بناءً على حالة التسجيل
+            updateUI();
+            
+            // مصفوفة لتخزين الملفات
+            let files = JSON.parse(localStorage.getItem('teacherFiles')) || [];
+            
+            // عرض الملفات عند تحميل الصفحة
+            renderFiles();
+            
+            // فتح نافذة تسجيل الدخول
+            adminLoginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginModal.style.display = 'flex';
+            });
+            
+            // إغلاق نافذة تسجيل الدخول
+            closeLoginBtn.addEventListener('click', function() {
+                loginModal.style.display = 'none';
+            });
+            
+            // معالجة تسجيل الدخول
+            loginBtn.addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                    isLoggedIn = true;
+                    localStorage.setItem('isTeacherLoggedIn', 'true');
+                    loginModal.style.display = 'none';
+                    updateUI();
+                    alert('تم تسجيل الدخول بنجاح!');
+                } else {
+                    alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+                }
+            });
+            
+            // تسجيل الخروج
+            logoutBtn.addEventListener('click', function() {
+                isLoggedIn = false;
+                localStorage.setItem('isTeacherLoggedIn', 'false');
+                updateUI();
+                alert('تم تسجيل الخروج بنجاح');
+            });
+            
+            // إظهار وإخفاء نموذج رفع الملف
+            showUploadFormBtn.addEventListener('click', function() {
+                uploadForm.style.display = 'block';
+            });
+            
+            addFileBtn.addEventListener('click', function() {
+                uploadForm.style.display = 'block';
+            });
+            
+            cancelUploadBtn.addEventListener('click', function() {
+                uploadForm.style.display = 'none';
+            });
+            
+            // معالجة رفع الملف
+            submitFileBtn.addEventListener('click', function() {
+                const fileTitle = document.getElementById('fileTitle').value;
+                const fileCategory = document.getElementById('fileCategory').value;
+                const fileInput = document.getElementById('fileUpload');
+                
+                if (!fileTitle || !fileInput.files[0]) {
+                    alert('يرجى إدخال اسم الملف واختيار ملف');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                
+                // إنشاء كائن FileReader لقراءة الملف
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // إنشاء كائن ملف جديد
+                    const newFile = {
+                        id: Date.now(),
+                        title: fileTitle,
+                        category: fileCategory,
+                        type: 'pdf',
+                        size: formatFileSize(file.size),
+                        url: e.target.result,
+                        uploadDate: new Date().toLocaleDateString('ar-EG')
+                    };
+                    
+                    // إضافة الملف إلى المصفوفة
+                    files.push(newFile);
+                    
+                    // حفظ الملفات في localStorage
+                    localStorage.setItem('teacherFiles', JSON.stringify(files));
+                    
+                    // إعادة عرض الملفات
+                    renderFiles();
+                    
+                    // إخفاء النموذج وإعادة تعيينه
+                    uploadForm.style.display = 'none';
+                    document.getElementById('fileTitle').value = '';
+                    document.getElementById('fileUpload').value = '';
+                    
+                    alert('تم رفع الملف بنجاح!');
+                };
+                
+                reader.readAsDataURL(file);
+            });
+            
+            // وظيفة لعرض الملفات
+            function renderFiles() {
+                filesContainer.innerHTML = '';
+                
+                if (files.length === 0) {
+                    filesContainer.innerHTML = '<p>لا توجد ملفات متاحة للتحميل بعد.</p>';
+                    return;
+                }
+                
+                files.forEach(file => {
+                    const fileCard = document.createElement('div');
+                    fileCard.className = 'file-card';
+                    
+                    // زر الحذف (يظهر فقط للمعلم)
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    deleteBtn.style.display = isLoggedIn ? 'block' : 'none';
+                    deleteBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (confirm('هل أنت متأكد من حذف هذا الملف؟')) {
+                            deleteFile(file.id);
+                        }
+                    });
+                    
+                    fileCard.appendChild(deleteBtn);
+                    
+                    fileCard.innerHTML += `
+                        <div class="file-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="file-details">
+                            <h3>${file.title}</h3>
+                            <div class="file-meta">
+                                <span>PDF - ${file.size}</span>
+                            </div>
+                            <a href="${file.url}" download="${file.title}.pdf" class="download-btn">
+                                <i class="fas fa-download"></i> تحميل
+                            </a>
+                        </div>
+                    `;
+                    
+                    filesContainer.appendChild(fileCard);
+                });
+            }
+            
+            // وظيفة حذف الملف
+            function deleteFile(fileId) {
+                files = files.filter(file => file.id !== fileId);
+                localStorage.setItem('teacherFiles', JSON.stringify(files));
+                renderFiles();
+            }
+            
+            // وظيفة لتنسيق حجم الملف
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // تحديث واجهة المستخدم بناءً على حالة تسجيل الدخول
+            function updateUI() {
+                if (isLoggedIn) {
+                    adminBar.style.display = 'flex';
+                    showUploadFormBtn.style.display = 'block';
+                    adminLoginBtn.style.display = 'none';
+                    
+                    // إظهار أزرار الحذف على الملفات
+                    document.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.style.display = 'block';
+                    });
+                } else {
+                    adminBar.style.display = 'none';
+                    showUploadFormBtn.style.display = 'none';
+                    uploadForm.style.display = 'none';
+                    adminLoginBtn.style.display = 'flex';
+                    
+                    // إخفاء أزرار الحذف على الملفات
+                    document.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.style.display = 'none';
+                    });
+                }
+            }
+            
+            // البحث عن الملفات
+            const searchBox = document.querySelector('.search-box input');
+            const searchBtn = document.querySelector('.search-box button');
+            
+            searchBtn.addEventListener('click', function() {
+                const searchTerm = searchBox.value.trim().toLowerCase();
+                
+                if (searchTerm !== '') {
+                    const filteredFiles = files.filter(file => 
+                        file.title.toLowerCase().includes(searchTerm) || 
+                        file.category.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    // عرض نتائج البحث
+                    if (filteredFiles.length > 0) {
+                        filesContainer.innerHTML = '';
+                        
+                        filteredFiles.forEach(file => {
+                            const fileCard = document.createElement('div');
+                            fileCard.className = 'file-card';
+                            
+                            fileCard.innerHTML = `
+                                <div class="file-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="file-details">
+                                    <h3>${file.title}</h3>
+                                    <div class="file-meta">
+                                        <span>PDF - ${file.size}</span>
+                                    </div>
+                                    <a href="${file.url}" download="${file.title}.pdf" class="download-btn">
+                                        <i class="fas fa-download"></i> تحميل
+                                    </a>
+                                </div>
+                            `;
+                            
+                            filesContainer.appendChild(fileCard);
+                        });
+                    } else {
+                        filesContainer.innerHTML = '<p>لا توجد نتائج للبحث.</p>';
+                    }
+                } else {
+                    // إذا كان البحث فارغًا، عرض جميع الملفات
+                    renderFiles();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
