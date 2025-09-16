@@ -103,7 +103,7 @@
             font-weight: 500;
         }
         
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -327,7 +327,6 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            display: none;
         }
         
         .files-grid {
@@ -394,7 +393,6 @@
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
-            display: none;
         }
         
         .upload-form h3 {
@@ -414,6 +412,41 @@
             height: 30px;
             cursor: pointer;
             display: none;
+        }
+        
+        .upload-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .upload-option-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: #e9ecef;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-option-btn.active {
+            background: #2575fc;
+            color: white;
+        }
+        
+        .file-preview {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .file-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 5px;
         }
         
         footer {
@@ -470,6 +503,10 @@
             
             .btn {
                 width: 100%;
+            }
+            
+            .upload-options {
+                flex-direction: column;
             }
         }
     </style>
@@ -530,8 +567,8 @@
             </div>
             
             <div class="search-box">
-                <input type="text" placeholder="ابحث عن ملف أو مادة...">
-                <button><i class="fas fa-search"></i> بحث</button>
+                <input type="text" placeholder="ابحث عن ملف أو مادة..." id="searchInput">
+                <button id="searchBtn"><i class="fas fa-search"></i> بحث</button>
             </div>
         </header>
         
@@ -539,19 +576,17 @@
             <div class="sidebar">
                 <h2>الأقسام الرئيسية</h2>
                 <ul class="categories">
-                    <li><a href="#"><i class="fas fa-calculator"></i> الوحدة الأولى</a></li>
-                    <li><a href="#"><i class="fas fa-flask"></i> الوحدة الثانية</a></li>
-                    <li><a href="#"><i class="fas fa-language"></i> الوحدة الرابعة</a></li>
-                    <li><a href="#"><i class="fas fa-globe"></i> الوحدة الخامسة</a></li>
-                    <li><a href="#"><i class="fas fa-code"></i> الوحدة السادسة</a></li>
-                    <li><a href="#"><i class="fas fa-book"></i> المراجعات النهائية</a></li>
+                    <li><a href="#" data-category="unit1"><i class="fas fa-calculator"></i> الوحدة الأولى</a></li>
+                    <li><a href="#" data-category="unit2"><i class="fas fa-flask"></i> الوحدة الثانية</a></li>
+                    <li><a href="#" data-category="unit4"><i class="fas fa-language"></i> الوحدة الرابعة</a></li>
+                    <li><a href="#" data-category="unit5"><i class="fas fa-globe"></i> الوحدة الخامسة</a></li>
+                    <li><a href="#" data-category="unit6"><i class="fas fa-code"></i> الوحدة السادسة</a></li>
+                    <li><a href="#" data-category="reviews"><i class="fas fa-book"></i> المراجعات النهائية</a></li>
                 </ul>
                 
                 <h2>الملفات الأخيرة</h2>
-                <ul class="categories">
-                    <li><a href="#"><i class="fas fa-file-pdf"></i> ملخص قواعد الرياضيات</a></li>
-                    <li><a href="#"><i class="fas fa-file-word"></i> تجارب علوم للفصل الأول</a></li>
-                    <li><a href="#"><i class="fas fa-file-excel"></i> جداول المراجعة النهائية</a></li>
+                <ul class="categories" id="recentFiles">
+                    <!-- سيتم ملؤها ديناميكيًا -->
                 </ul>
             </div>
             
@@ -563,9 +598,19 @@
                     </button>
                 </div>
                 
-                <!-- نموذج رفع الملف (مخفي بشكل افتراضي) -->
+                <!-- نموذج رفع الملف -->
                 <div class="upload-form" id="uploadForm">
-                    <h3>رفع ملف جديد</h3>
+                    <h3>إضافة ملف جديد</h3>
+                    
+                    <div class="upload-options">
+                        <div class="upload-option-btn active" id="localUploadOption">
+                            <i class="fas fa-upload"></i> رفع ملف من الجهاز
+                        </div>
+                        <div class="upload-option-btn" id="urlUploadOption">
+                            <i class="fas fa-link"></i> رابط خارجي
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="fileTitle">اسم الملف</label>
                         <input type="text" id="fileTitle" placeholder="أدخل اسم الملف">
@@ -581,13 +626,27 @@
                             <option value="reviews">المراجعات النهائية</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="fileUpload">اختر الملف (PDF فقط)</label>
-                        <input type="file" id="fileUpload" accept=".pdf">
+                    
+                    <div id="localUploadSection">
+                        <div class="form-group">
+                            <label for="fileInput">اختر الملف</label>
+                            <input type="file" id="fileInput">
+                        </div>
+                        <div class="file-preview" id="filePreview">
+                            <p>معاينة الملف ستظهر هنا</p>
+                        </div>
                     </div>
+                    
+                    <div id="urlUploadSection" style="display: none;">
+                        <div class="form-group">
+                            <label for="fileUrl">رابط الملف</label>
+                            <input type="text" id="fileUrl" placeholder="https://example.com/file.pdf">
+                        </div>
+                    </div>
+                    
                     <div class="form-actions">
                         <button class="btn btn-secondary" id="cancelUpload">إلغاء</button>
-                        <button class="btn btn-primary" id="submitFile">رفع الملف</button>
+                        <button class="btn btn-primary" id="submitFile">إضافة الملف</button>
                     </div>
                 </div>
                 
@@ -604,7 +663,7 @@
     </div>
 
     <script>
-        // بيانات الاعتماد الافتراضية (يمكن تغييرها)
+        // بيانات الاعتماد الافتراضية
         const ADMIN_CREDENTIALS = {
             username: "zaidradaideh",
             password: "zaid2007"
@@ -624,6 +683,19 @@
             const adminBar = document.getElementById('adminBar');
             const addFileBtn = document.getElementById('addFileBtn');
             const logoutBtn = document.getElementById('logoutBtn');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const recentFilesList = document.getElementById('recentFiles');
+            const categoryLinks = document.querySelectorAll('.categories a[data-category]');
+            const fileInput = document.getElementById('fileInput');
+            const filePreview = document.getElementById('filePreview');
+            const localUploadOption = document.getElementById('localUploadOption');
+            const urlUploadOption = document.getElementById('urlUploadOption');
+            const localUploadSection = document.getElementById('localUploadSection');
+            const urlUploadSection = document.getElementById('urlUploadSection');
+            
+            // إخفاء نموذج الرفع في البداية
+            uploadForm.style.display = 'none';
             
             // التحقق من حالة تسجيل الدخول
             let isLoggedIn = localStorage.getItem('isTeacherLoggedIn') === 'true';
@@ -634,8 +706,199 @@
             // مصفوفة لتخزين الملفات
             let files = JSON.parse(localStorage.getItem('teacherFiles')) || [];
             
+            // إذا لم تكن هناك ملفات، قم بإضافة بعض الأمثلة
+            if (files.length === 0) {
+                files = [
+                    {
+                        id: 1,
+                        title: "ملخص قواعد الرياضيات",
+                        category: "reviews",
+                        type: "pdf",
+                        size: "2.4 MB",
+                        url: "#",
+                        uploadDate: "2023-10-15",
+                        content: null
+                    },
+                    {
+                        id: 2,
+                        title: "تمارين محلولة في الفيزياء",
+                        category: "unit2",
+                        type: "pdf",
+                        size: "1.8 MB",
+                        url: "#",
+                        uploadDate: "2023-10-10",
+                        content: null
+                    }
+                ];
+                localStorage.setItem('teacherFiles', JSON.stringify(files));
+            }
+            
             // عرض الملفات عند تحميل الصفحة
             renderFiles();
+            updateRecentFiles();
+            
+            // تبديل خيارات الرفع
+            localUploadOption.addEventListener('click', function() {
+                localUploadOption.classList.add('active');
+                urlUploadOption.classList.remove('active');
+                localUploadSection.style.display = 'block';
+                urlUploadSection.style.display = 'none';
+            });
+            
+            urlUploadOption.addEventListener('click', function() {
+                urlUploadOption.classList.add('active');
+                localUploadOption.classList.remove('active');
+                urlUploadSection.style.display = 'block';
+                localUploadSection.style.display = 'none';
+            });
+            
+            // معاينة الملف المختار
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const fileSize = formatFileSize(file.size);
+                    filePreview.innerHTML = `
+                        <p><strong>اسم الملف:</strong> ${file.name}</p>
+                        <p><strong>الحجم:</strong> ${fileSize}</p>
+                        <p><strong>النوع:</strong> ${file.type}</p>
+                    `;
+                    filePreview.style.display = 'block';
+                }
+            });
+            
+            // إظهار وإخفاء نموذج رفع الملف
+            showUploadFormBtn.addEventListener('click', function() {
+                uploadForm.style.display = uploadForm.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            addFileBtn.addEventListener('click', function() {
+                uploadForm.style.display = 'block';
+            });
+            
+            cancelUploadBtn.addEventListener('click', function() {
+                uploadForm.style.display = 'none';
+                resetUploadForm();
+            });
+            
+            // معالجة إضافة الملف
+            submitFileBtn.addEventListener('click', function() {
+                const fileTitle = document.getElementById('fileTitle').value;
+                const fileCategory = document.getElementById('fileCategory').value;
+                const isLocalUpload = localUploadOption.classList.contains('active');
+                
+                if (!fileTitle) {
+                    alert('يرجى إدخال اسم الملف');
+                    return;
+                }
+                
+                let fileUrl, fileSize, fileType, fileContent;
+                
+                if (isLocalUpload) {
+                    const file = fileInput.files[0];
+                    if (!file) {
+                        alert('يرجى اختيار ملف لرفعه');
+                        return;
+                    }
+                    
+                    fileSize = formatFileSize(file.size);
+                    fileType = file.type;
+                    
+                    // تحويل الملف إلى base64 للتخزين
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        fileContent = e.target.result;
+                        
+                        // إنشاء كائن ملف جديد
+                        const newFile = {
+                            id: Date.now(),
+                            title: fileTitle,
+                            category: fileCategory,
+                            type: fileType,
+                            size: fileSize,
+                            url: URL.createObjectURL(file), // إنشاء رابط مؤقت للتحميل
+                            content: fileContent, // تخزين المحتوى كبيانات base64
+                            uploadDate: new Date().toLocaleDateString('ar-EG')
+                        };
+                        
+                        // إضافة الملف إلى المصفوفة
+                        files.push(newFile);
+                        
+                        // حفظ الملفات في localStorage
+                        localStorage.setItem('teacherFiles', JSON.stringify(files));
+                        
+                        // إعادة عرض الملفات
+                        renderFiles();
+                        updateRecentFiles();
+                        
+                        // إخفاء النموذج وإعادة تعيينه
+                        uploadForm.style.display = 'none';
+                        resetUploadForm();
+                        
+                        alert('تم إضافة الملف بنجاح!');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // رفع عبر الرابط
+                    fileUrl = document.getElementById('fileUrl').value;
+                    if (!fileUrl) {
+                        alert('يرجى إدخال رابط الملف');
+                        return;
+                    }
+                    
+                    fileSize = "غير محدد";
+                    fileType = "رابط خارجي";
+                    
+                    // إنشاء كائن ملف جديد
+                    const newFile = {
+                        id: Date.now(),
+                        title: fileTitle,
+                        category: fileCategory,
+                        type: fileType,
+                        size: fileSize,
+                        url: fileUrl,
+                        content: null,
+                        uploadDate: new Date().toLocaleDateString('ar-EG')
+                    };
+                    
+                    // إضافة الملف إلى المصفوفة
+                    files.push(newFile);
+                    
+                    // حفظ الملفات في localStorage
+                    localStorage.setItem('teacherFiles', JSON.stringify(files));
+                    
+                    // إعادة عرض الملفات
+                    renderFiles();
+                    updateRecentFiles();
+                    
+                    // إخفاء النموذج وإعادة تعيينه
+                    uploadForm.style.display = 'none';
+                    resetUploadForm();
+                    
+                    alert('تم إضافة الملف بنجاح!');
+                }
+            });
+            
+            // إعادة تعيين نموذج الرفع
+            function resetUploadForm() {
+                document.getElementById('fileTitle').value = '';
+                document.getElementById('fileUrl').value = '';
+                fileInput.value = '';
+                filePreview.style.display = 'none';
+                filePreview.innerHTML = '<p>معاينة الملف ستظهر هنا</p>';
+                localUploadOption.classList.add('active');
+                urlUploadOption.classList.remove('active');
+                localUploadSection.style.display = 'block';
+                urlUploadSection.style.display = 'none';
+            }
+            
+            // تنسيق حجم الملف
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
             
             // فتح نافذة تسجيل الدخول
             adminLoginBtn.addEventListener('click', function(e) {
@@ -672,65 +935,27 @@
                 alert('تم تسجيل الخروج بنجاح');
             });
             
-            // إظهار وإخفاء نموذج رفع الملف
-            showUploadFormBtn.addEventListener('click', function() {
-                uploadForm.style.display = 'block';
+            // البحث عن الملفات
+            searchBtn.addEventListener('click', function() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                searchFiles(searchTerm);
             });
             
-            addFileBtn.addEventListener('click', function() {
-                uploadForm.style.display = 'block';
-            });
-            
-            cancelUploadBtn.addEventListener('click', function() {
-                uploadForm.style.display = 'none';
-            });
-            
-            // معالجة رفع الملف
-            submitFileBtn.addEventListener('click', function() {
-                const fileTitle = document.getElementById('fileTitle').value;
-                const fileCategory = document.getElementById('fileCategory').value;
-                const fileInput = document.getElementById('fileUpload');
-                
-                if (!fileTitle || !fileInput.files[0]) {
-                    alert('يرجى إدخال اسم الملف واختيار ملف');
-                    return;
+            // البحث عند الضغط على Enter
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = searchInput.value.trim().toLowerCase();
+                    searchFiles(searchTerm);
                 }
-                
-                const file = fileInput.files[0];
-                
-                // إنشاء كائن FileReader لقراءة الملف
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    // إنشاء كائن ملف جديد
-                    const newFile = {
-                        id: Date.now(),
-                        title: fileTitle,
-                        category: fileCategory,
-                        type: 'pdf',
-                        size: formatFileSize(file.size),
-                        url: e.target.result,
-                        uploadDate: new Date().toLocaleDateString('ar-EG')
-                    };
-                    
-                    // إضافة الملف إلى المصفوفة
-                    files.push(newFile);
-                    
-                    // حفظ الملفات في localStorage
-                    localStorage.setItem('teacherFiles', JSON.stringify(files));
-                    
-                    // إعادة عرض الملفات
-                    renderFiles();
-                    
-                    // إخفاء النموذج وإعادة تعيينه
-                    uploadForm.style.display = 'none';
-                    document.getElementById('fileTitle').value = '';
-                    document.getElementById('fileUpload').value = '';
-                    
-                    alert('تم رفع الملف بنجاح!');
-                };
-                
-                reader.readAsDataURL(file);
+            });
+            
+            // تصفية الملفات حسب التصنيف
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const category = this.getAttribute('data-category');
+                    filterFilesByCategory(category);
+                });
             });
             
             // وظيفة لعرض الملفات
@@ -761,16 +986,23 @@
                     
                     fileCard.appendChild(deleteBtn);
                     
+                    // تحديد أيقونة الملف بناءً على نوعه
+                    let fileIcon = 'fa-file';
+                    if (file.type.includes('pdf')) fileIcon = 'fa-file-pdf';
+                    else if (file.type.includes('image')) fileIcon = 'fa-file-image';
+                    else if (file.type.includes('word') || file.type.includes('document')) fileIcon = 'fa-file-word';
+                    else if (file.type.includes('zip') || file.type.includes('rar')) fileIcon = 'fa-file-archive';
+                    
                     fileCard.innerHTML += `
                         <div class="file-icon">
-                            <i class="fas fa-file-pdf"></i>
+                            <i class="fas ${fileIcon}"></i>
                         </div>
                         <div class="file-details">
                             <h3>${file.title}</h3>
                             <div class="file-meta">
-                                <span>PDF - ${file.size}</span>
+                                <span>${file.type.split('/')[0]} - ${file.size}</span>
                             </div>
-                            <a href="${file.url}" download="${file.title}.pdf" class="download-btn">
+                            <a href="${file.url}" target="_blank" class="download-btn" download="${file.title}">
                                 <i class="fas fa-download"></i> تحميل
                             </a>
                         </div>
@@ -785,25 +1017,15 @@
                 files = files.filter(file => file.id !== fileId);
                 localStorage.setItem('teacherFiles', JSON.stringify(files));
                 renderFiles();
-            }
-            
-            // وظيفة لتنسيق حجم الملف
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                updateRecentFiles();
             }
             
             // تحديث واجهة المستخدم بناءً على حالة تسجيل الدخول
             function updateUI() {
                 if (isLoggedIn) {
                     adminBar.style.display = 'flex';
-                    showUploadFormBtn.style.display = 'block';
                     adminLoginBtn.style.display = 'none';
+                    showUploadFormBtn.style.display = 'block';
                     
                     // إظهار أزرار الحذف على الملفات
                     document.querySelectorAll('.delete-btn').forEach(btn => {
@@ -811,9 +1033,9 @@
                     });
                 } else {
                     adminBar.style.display = 'none';
+                    adminLoginBtn.style.display = 'flex';
                     showUploadFormBtn.style.display = 'none';
                     uploadForm.style.display = 'none';
-                    adminLoginBtn.style.display = 'flex';
                     
                     // إخفاء أزرار الحذف على الملفات
                     document.querySelectorAll('.delete-btn').forEach(btn => {
@@ -823,12 +1045,7 @@
             }
             
             // البحث عن الملفات
-            const searchBox = document.querySelector('.search-box input');
-            const searchBtn = document.querySelector('.search-box button');
-            
-            searchBtn.addEventListener('click', function() {
-                const searchTerm = searchBox.value.trim().toLowerCase();
-                
+            function searchFiles(searchTerm) {
                 if (searchTerm !== '') {
                     const filteredFiles = files.filter(file => 
                         file.title.toLowerCase().includes(searchTerm) || 
@@ -836,41 +1053,92 @@
                     );
                     
                     // عرض نتائج البحث
-                    if (filteredFiles.length > 0) {
-                        filesContainer.innerHTML = '';
-                        
-                        filteredFiles.forEach(file => {
-                            const fileCard = document.createElement('div');
-                            fileCard.className = 'file-card';
-                            
-                            fileCard.innerHTML = `
-                                <div class="file-icon">
-                                    <i class="fas fa-file-pdf"></i>
-                                </div>
-                                <div class="file-details">
-                                    <h3>${file.title}</h3>
-                                    <div class="file-meta">
-                                        <span>PDF - ${file.size}</span>
-                                    </div>
-                                    <a href="${file.url}" download="${file.title}.pdf" class="download-btn">
-                                        <i class="fas fa-download"></i> تحميل
-                                    </a>
-                                </div>
-                            `;
-                            
-                            filesContainer.appendChild(fileCard);
-                        });
-                    } else {
-                        filesContainer.innerHTML = '<p>لا توجد نتائج للبحث.</p>';
-                    }
+                    displayFiles(filteredFiles);
                 } else {
                     // إذا كان البحث فارغًا، عرض جميع الملفات
                     renderFiles();
                 }
-            });
+            }
+            
+            // تصفية الملفات حسب التصنيف
+            function filterFilesByCategory(category) {
+                const filteredFiles = files.filter(file => file.category === category);
+                displayFiles(filteredFiles);
+            }
+            
+            // عرض الملفات المصفاة
+            function displayFiles(filesToDisplay) {
+                filesContainer.innerHTML = '';
+                
+                if (filesToDisplay.length === 0) {
+                    filesContainer.innerHTML = '<p>لا توجد نتائج.</p>';
+                    return;
+                }
+                
+                filesToDisplay.forEach(file => {
+                    const fileCard = document.createElement('div');
+                    fileCard.className = 'file-card';
+                    
+                    // زر الحذف (يظهر فقط للمعلم)
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    deleteBtn.style.display = isLoggedIn ? 'block' : 'none';
+                    deleteBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (confirm('هل أنت متأكد من حذف هذا الملف؟')) {
+                            deleteFile(file.id);
+                        }
+                    });
+                    
+                    fileCard.appendChild(deleteBtn);
+                    
+                    // تحديد أيقونة الملف بناءً على نوعه
+                    let fileIcon = 'fa-file';
+                    if (file.type.includes('pdf')) fileIcon = 'fa-file-pdf';
+                    else if (file.type.includes('image')) fileIcon = 'fa-file-image';
+                    else if (file.type.includes('word') || file.type.includes('document')) fileIcon = 'fa-file-word';
+                    else if (file.type.includes('zip') || file.type.includes('rar')) fileIcon = 'fa-file-archive';
+                    
+                    fileCard.innerHTML += `
+                        <div class="file-icon">
+                            <i class="fas ${fileIcon}"></i>
+                        </div>
+                        <div class="file-details">
+                            <h3>${file.title}</h3>
+                            <div class="file-meta">
+                                <span>${file.type.split('/')[0]} - ${file.size}</span>
+                            </div>
+                            <a href="${file.url}" target="_blank" class="download-btn" download="${file.title}">
+                                <i class="fas fa-download"></i> تحميل
+                            </a>
+                        </div>
+                    `;
+                    
+                    filesContainer.appendChild(fileCard);
+                });
+            }
+            
+            // تحديث قائمة الملفات الأخيرة
+            function updateRecentFiles() {
+                recentFilesList.innerHTML = '';
+                
+                // الحصول على أحدث 3 ملفات
+                const recentFiles = [...files].sort((a, b) => b.id - a.id).slice(0, 3);
+                
+                recentFiles.forEach(file => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <a href="${file.url}" target="_blank" download="${file.title}">
+                            <i class="fas fa-file-pdf"></i> ${file.title}
+                        </a>
+                    `;
+                    recentFilesList.appendChild(listItem);
+                });
+            }
         });
     </script>
 </body>
-
 </html>
 
